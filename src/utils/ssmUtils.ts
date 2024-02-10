@@ -30,14 +30,18 @@ export const parseSSML = (ssml: string): SSMLInstruction[] => {
                 // Handling audio is complex due to limitations of the Web Speech API; omitted for brevity
                 break
             case '#text':
-                instructions.push({
-                    type: 'text',
-                    content: node.textContent || '',
-                })
+                if (node.textContent?.trim()) {
+                    // Check if the text node contains non-whitespace content
+                    instructions.push({
+                        type: 'text',
+                        content: node.textContent.trim(),
+                    })
+                }
                 break
-            default:
-                node.childNodes.forEach(processNode)
         }
+
+        // Always check for child nodes and process them recursively
+        node.childNodes.forEach(processNode)
     }
 
     xmlDoc.childNodes.forEach(processNode)
